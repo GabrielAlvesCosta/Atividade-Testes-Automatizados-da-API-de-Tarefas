@@ -57,7 +57,7 @@ def test_ct03_login_sem_password():
 # MÓDULO: CRIAR TAREFA
 # ==============================================================================
 
-def test_ct04_criar_tarefa_com_dados_validos():
+def test_ct04_criar_tarefa_com_dados_validos_com_descricao():
     """
     Cenário: Cliente envia titulo e descricao preenchidos.
     Verifica criação com sucesso (201) e correspondência exata dos dados e tipo de ID.
@@ -72,7 +72,7 @@ def test_ct04_criar_tarefa_com_dados_validos():
     assert dados['status'] == 'pendente'
 
 
-def test_ct05_criar_tarefa_sem_descricao():
+def test_ct05_criar_tarefa_sem_descricao_campo_opcional():
     """
     Cenário: A descrição é opcional — deve ser aceita sem ela.
     Verifica se a tarefa é criada com sucesso e se a descrição retorna nula (None).
@@ -104,7 +104,7 @@ def test_ct07_criar_tarefa_sem_campo_titulo():
     assert resposta.status_code == 422
 
 
-def test_ct08_criar_tarefa_com_titulo_acima_do_limite():
+def test_ct08_criar_tarefa_com_titulo_acima_do_limite_201():
     """
     Cenário: Limite máximo do título é 200 caracteres.
     Verifica se o envio de um título com 201 caracteres falha com HTTP 422.
@@ -114,7 +114,7 @@ def test_ct08_criar_tarefa_com_titulo_acima_do_limite():
     assert resposta.status_code == 422
 
 
-def test_ct09_status_inicial_da_tarefa_criada():
+def test_ct09_status_inicial_da_tarefa_criada_e_pendente():
     """
     Cenário: Independentemente do que o cliente envie, o status inicial é sempre 'pendente'.
     Verifica se o campo status é implicitamente setado de forma correta pela API.
