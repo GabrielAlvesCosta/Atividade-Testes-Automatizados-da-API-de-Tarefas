@@ -43,16 +43,16 @@ configfile: pyproject.toml
 plugins: anyio-4.13.0
 collected 19 items
 
-tests/test_api.py::test_ct01_login_valido PASSED                                                                          [  5%]
-tests/test_api.py::test_ct02_login_sem_username PASSED                                                                    [ 10%]
-tests/test_api.py::test_ct03_login_sem_password PASSED                                                                    [ 15%]
-tests/test_api.py::test_ct04_criar_tarefa_com_dados_validos PASSED                                                        [ 21%]
-tests/test_api.py::test_ct05_criar_tarefa_sem_descricao PASSED                                                            [ 26%]
+tests/test_api.py::test_ct01_login_valido PASSED                                                                           [  5%]
+tests/test_api.py::test_ct02_login_sem_username PASSED                                                                     [ 10%]
+tests/test_api.py::test_ct03_login_sem_password PASSED                                                                     [ 15%]
+tests/test_api.py::test_ct04_criar_tarefa_com_dados_validos PASSED                                                         [ 21%]
+tests/test_api.py::test_ct05_criar_tarefa_sem_descricao PASSED                                                             [ 26%]
 tests/test_api.py::test_ct06_criar_tarefa_com_titulo_vazio PASSED                                                          [ 31%]
 tests/test_api.py::test_ct07_criar_tarefa_sem_campo_titulo PASSED                                                          [ 36%]
 tests/test_api.py::test_ct08_criar_tarefa_com_titulo_acima_do_limite PASSED                                                [ 42%]
 tests/test_api.py::test_ct09_status_inicial_da_tarefa_criada PASSED                                                        [ 47%]
-tests/test_api.py::test_ct10_listar_tarefas_com_repositorio_vazio PASSED                                                  [ 52%]
+tests/test_api.py::test_ct10_listar_tarefas_com_repositorio_vazio PASSED                                                   [ 52%]
 tests/test_api.py::test_ct11_listar_tarefas_apos_criacao PASSED                                                            [ 57%]
 tests/test_api.py::test_ct12_buscar_tarefa_existente PASSED                                                                [ 63%]
 tests/test_api.py::test_ct13_buscar_tarefa_com_id_inexistente PASSED                                                       [ 68%]
@@ -61,12 +61,12 @@ tests/test_api.py::test_ct15_deletar_tarefa_sem_token PASSED                    
 tests/test_api.py::test_ct16_deletar_tarefa_com_token_invalido PASSED                                                      [ 84%]
 tests/test_api.py::test_ct17_deletar_tarefa_existente_com_token_valido PASSED                                              [ 89%]
 tests/test_api.py::test_ct18_deletar_tarefa_inexistente_com_token_valido PASSED                                            [ 94%]
-tests/test_api.py::test_ct19_tarefa_deletada_nao_pode_ser_encontrada_depois PASSED                                         [100%]
+tests/test_api.py::test_ct19_tarefa_deletada_nao_pode_ser_encontrada_depois PASSED                                         [[100%]]
 
 ====================================================== 19 passed in 0.52s =======================================================
 
 ## 4. Dificuldades Encontradas
 
-A principal dificuldade encontrada durante o desenvolvimento desta suíte esteve relacionada ao isolamento do estado físico da API e à concorrência interna do ciclo de coleta de testes do pytest. Como os dados da aplicação estão estruturados de forma volátil dentro de um dicionário global em memória (_tarefas), as alterações realizadas por testes de escrita ou deleção geravam efeitos colaterais imediatos nos testes subsequentes, provocando falhas em cascata induzidas pela quebra de ordem cronológica. Se o caso de teste de listagem vazia rodasse após a criação de uma tarefa, ele falharia incorretamente por herdar lixo de memória.
+A principal dificuldade encontrada durante o desenvolvimento destes testes esteve relacionada ao isolamento do estado físico da API e à concorrência interna do ciclo de coleta de testes do pytest. Como os dados da aplicação estão estruturados de forma volátil dentro de um dicionário global em memória (_tarefas), as alterações realizadas por testes de escrita ou deleção geravam efeitos colaterais imediatos nos testes subsequentes, provocando falhas em cascata induzidas pela quebra de ordem cronológica. Se o caso de teste de listagem vazia rodasse após a criação de uma tarefa, ele falharia incorretamente por herdar lixo de memória.
 
 Para solucionar esse problema técnico de forma elegante e garantir a independência mútua exigida pela atividade, foi estruturada uma fixture global no Pytest configurada com autouse=True. Essa função intercepta o ciclo de vida imediatamente anterior a cada caso de teste individual, realiza uma importação direta do escopo interno de módulos da aplicação (src.tarefas.app) e invoca comandos de limpeza forçada (.clear()) nas variáveis em memória RAM, reiniciando o ponteiro sequencial _proximo_id para 1. Adicionalmente, enfrentou-se um problema sintático pontual com operadores de atribuição por expressão (:=) durante a escrita rápida de asserts condicionais de status de rede, o qual foi mitigado simplificando a validação para asserções booleanas diretas padrão do ecossistema Python. Esse conjunto de processos garantiu um ambiente controlado e perfeitamente isolado para a validação precisa de cada cenário.
